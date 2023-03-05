@@ -4,7 +4,8 @@ class Navigation extends Component {
   render() {
     return (
       <nav>
-        <p>Sign out</p>
+            <p className="tr f2 dark-blue link dim pointer pa3 ma0">
+                Sign out</p>
       </nav>
     );
   }
