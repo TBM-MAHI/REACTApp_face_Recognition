@@ -11,11 +11,14 @@ body {
       #04c8de 100%);
   
 }
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
+.centerFlex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
 
 .App-header {
   background-color: #282c34;
