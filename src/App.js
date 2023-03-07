@@ -14,36 +14,57 @@ class App extends React.Component {
     this.state = {
       input: "",
       imageURL: "",
-      box:{}
+      boxes: {},
     };
   }
-  calculateFaceLocation(regions) {
-    regions.map((r) => console.log(r.region_info.bounding_box));
-    let imgInput = document.getElementById("inputImg");
-    let imgHeight = imgInput.height;
-    let imgWidth = imgInput.width;
-    console.log(imgHeight,imgWidth);
 
-}
+  calculateFaceLocation = (regions) => {
+    let imgBoxes = {};
+    let imgInput = document.getElementById("inputImg");
+    let imgHeight = Number(imgInput.height);
+    let imgWidth = Number(imgInput.width);
+    console.log("height ",imgHeight, imgWidth);
+    regions.map((r, index) => {
+      imgBoxes[`imgbox${index}`] = {
+        leftCol: r.region_info.bounding_box.left_col * imgWidth,
+        rightCol: imgWidth - r.region_info.bounding_box.right_col * imgWidth,
+        topRow: r.region_info.bounding_box.top_row * imgHeight,
+        bottomRow:
+          imgHeight - r.region_info.bounding_box.bottom_row * imgHeight,
+      };
+    });
+    return imgBoxes;
+  };
+  faceBoxes = (imgBoxes) => {
+    this.setState(() => {
+      return { boxes : imgBoxes};
+    }, () => {
+     // console.log(this.state.boxes);
+    })
+  };
+
   inputOnChange = (event) => {
     this.setState(() => {
       return { input: event.target.value };
-    })
-  }
+    });
+  };
 
   onButtonSubmit = () => {
     console.log("loading...");
-    // const IMAGE_URL = this.state.input;
-    const IMAGE_URL =
-      "https://th.bing.com/th/id/OIP.vIQr_keH9CObzE7niK_lcgHaEo?pid=ImgDet&rs=1";
+  const IMAGE_URL = this.state.input;
+    // const IMAGE_URL = "https://th.bing.com/th/id/OIP.vIQr_keH9CObzE7niK_lcgHaEo?pid=ImgDet&rs=1";
+    // const IMAGE_URL = "https://c.stocksy.com/a/wyk500/z9/1372242.jpg";
     const PAT = "a8161d6bdac44d71ad7d8fb71d58de8c";
     const MODEL_ID = "face-detection";
     const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
-    this.setState(() => {
-      return { imageURL :IMAGE_URL};
-    }, () => {
-      console.log("set state"+this.state.imageURL);
-    })
+    this.setState(
+      () => {
+        return { imageURL: IMAGE_URL };
+      },
+      () => {
+        console.log("set state" + this.state.imageURL);
+      }
+    );
     ///////////////////////////////////////////////////////////////////////////////////
     // YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE TO RUN THIS EXAMPLE
     ///////////////////////////////////////////////////////////////////////////////////
@@ -86,9 +107,11 @@ class App extends React.Component {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log(result.outputs[ 0 ].data.regions);
-        this.calculateFaceLocation(result.outputs[0].data.regions);
-      } )
+        //console.log(result.outputs[ 0 ].data.regions);
+        this.faceBoxes(
+          this.calculateFaceLocation(result.outputs[0].data.regions)
+        );
+      })
       .catch((error) => console.log("error", error));
   };
   render() {
@@ -102,7 +125,7 @@ class App extends React.Component {
           inputOnChange={this.inputOnChange}
           onButtonSubmit={this.onButtonSubmit}
         />
-        <FaceDetection imageURL={this.state.imageURL} />
+        <FaceDetection imageURL={this.state.imageURL} boxes={this.state.boxes} />
       </div>
     );
   }

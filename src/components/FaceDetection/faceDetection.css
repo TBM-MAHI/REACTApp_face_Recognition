@@ -1,0 +1,17 @@
+.bounding-box{
+
+}
+img{
+    alt: 'pic';
+    width: 600px;
+    height:auto;
+   
+    
+}
+.bounding-box{
+    position: absolute;
+    box-shadow: 0 0 0 3px blue inset;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
