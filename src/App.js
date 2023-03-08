@@ -2,6 +2,8 @@ import React from "react";
 import Clarifai from "clarifai";
 import "./App.css";
 import ParticlesComponent from "./components/Particles/Particle.jsx";
+import Register from "./components/Register/Register";
+import Signin from "./components/Signin/Signin";
 import Navigation from "./components/Navigation/Navigation.jsx";
 import Logo from "./components/Logo/Logo";
 import Rank from "./components/Rank/Rank";
@@ -15,6 +17,7 @@ class App extends React.Component {
       input: "",
       imageURL: "",
       boxes: {},
+      route: "signin",
     };
   }
 
@@ -23,7 +26,7 @@ class App extends React.Component {
     let imgInput = document.getElementById("inputImg");
     let imgHeight = Number(imgInput.height);
     let imgWidth = Number(imgInput.width);
-    console.log("height ",imgHeight, imgWidth);
+    console.log("height ", imgHeight, imgWidth);
     regions.map((r, index) => {
       imgBoxes[`imgbox${index}`] = {
         leftCol: r.region_info.bounding_box.left_col * imgWidth,
@@ -36,11 +39,14 @@ class App extends React.Component {
     return imgBoxes;
   };
   faceBoxes = (imgBoxes) => {
-    this.setState(() => {
-      return { boxes : imgBoxes};
-    }, () => {
-     // console.log(this.state.boxes);
-    })
+    this.setState(
+      () => {
+        return { boxes: imgBoxes };
+      },
+      () => {
+        // console.log(this.state.boxes);
+      }
+    );
   };
 
   inputOnChange = (event) => {
@@ -49,9 +55,14 @@ class App extends React.Component {
     });
   };
 
+  onRouteChange = (route) => {
+    this.setState(() => {
+      return { route: route };
+    });
+  };
   onButtonSubmit = () => {
     console.log("loading...");
-  const IMAGE_URL = this.state.input;
+    const IMAGE_URL = this.state.input;
     // const IMAGE_URL = "https://th.bing.com/th/id/OIP.vIQr_keH9CObzE7niK_lcgHaEo?pid=ImgDet&rs=1";
     // const IMAGE_URL = "https://c.stocksy.com/a/wyk500/z9/1372242.jpg";
     const PAT = "a8161d6bdac44d71ad7d8fb71d58de8c";
@@ -115,17 +126,30 @@ class App extends React.Component {
       .catch((error) => console.log("error", error));
   };
   render() {
+    let { onRouteChange, inputOnChange, onButtonSubmit } = this;
+    console.log(" app render");
     return (
       <div>
         <ParticlesComponent />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm
-          inputOnChange={this.inputOnChange}
-          onButtonSubmit={this.onButtonSubmit}
-        />
-        <FaceDetection imageURL={this.state.imageURL} boxes={this.state.boxes} />
+        {this.state.route === "signin" ? (
+          <Signin onRouteChange={onRouteChange} />
+        ) : this.state.route === "register" ? (
+          <Register onRouteChange={onRouteChange} />
+        ) : (
+          <div>
+            <Navigation onRouteChange={onRouteChange} />
+            <Logo />
+            <Rank />
+            <ImageLinkForm
+              inputOnChange={inputOnChange}
+              onButtonSubmit={onButtonSubmit}
+            />
+            <FaceDetection
+              imageURL={this.state.imageURL}
+              boxes={this.state.boxes}
+            />
+          </div>
+        )}
       </div>
     );
   }

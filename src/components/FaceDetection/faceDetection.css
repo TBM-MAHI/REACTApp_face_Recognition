@@ -1,12 +1,7 @@
-.bounding-box{
-
-}
 img{
     alt: 'pic';
     width: 600px;
     height:auto;
-   
-    
 }
 .bounding-box{
     position: absolute;
