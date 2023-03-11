@@ -4,7 +4,7 @@ class ImageLinkForm extends Component {
   
  
   render() {
-    let { inputOnChange,onButtonSubmit } = this.props;
+    let { inputOnChange, onDetectButtonSubmit } = this.props;
     return (
       <div className="centerFlex f2 w-70 pa3 ml-auto mr-auto shadow-1">
         <p>This will detect faces in a picture. GIVE IT A TRY</p>
@@ -14,8 +14,10 @@ class ImageLinkForm extends Component {
             type="text"
             onChange={inputOnChange}
           />
-          <button className="grow w-20 pa3 blue bg-light-pink pointer outline-0"
-                   onClick={onButtonSubmit}  >
+          <button
+            className="grow w-20 pa3 blue bg-light-pink pointer outline-0"
+            onClick={onDetectButtonSubmit}
+          >
             Detect
           </button>
         </div>

@@ -18,15 +18,42 @@ class App extends React.Component {
       imageURL: "",
       boxes: {},
       route: "signin",
+      user: {
+        id: 2,
+        name: "",
+        username: "",
+        email: "",
+        password: "",
+        entries: 0,
+        joined: new Date(),
+      },
     };
   }
-
+  componentDidMount() {
+    fetch('http://localhost:3001')
+      .then(response => response.json())
+      .then(result => console.log(result))
+  }
+  loadUsers = (data) => {
+    this.setState(() => {
+      return {
+        user: {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          entries: data.entries,
+          joined: data.joined,
+        },
+      };
+    },()=> console.log(this.state.user))
+  }
   calculateFaceLocation = (regions) => {
     let imgBoxes = {};
     let imgInput = document.getElementById("inputImg");
     let imgHeight = Number(imgInput.height);
     let imgWidth = Number(imgInput.width);
-    console.log("height ", imgHeight, imgWidth);
+   // console.log("height ", imgHeight, imgWidth);
     regions.map((r, index) => {
       imgBoxes[`imgbox${index}`] = {
         leftCol: r.region_info.bounding_box.left_col * imgWidth,
@@ -60,26 +87,19 @@ class App extends React.Component {
       return { route: route };
     });
   };
-  onButtonSubmit = () => {
+  onDetectButtonSubmit = () => {
     console.log("loading...");
-    const IMAGE_URL = this.state.input;
-    // const IMAGE_URL = "https://th.bing.com/th/id/OIP.vIQr_keH9CObzE7niK_lcgHaEo?pid=ImgDet&rs=1";
+    // const IMAGE_URL = this.state.input;
+    const IMAGE_URL = "https://th.bing.com/th/id/OIP.vIQr_keH9CObzE7niK_lcgHaEo?pid=ImgDet&rs=1";
     // const IMAGE_URL = "https://c.stocksy.com/a/wyk500/z9/1372242.jpg";
     const PAT = "a8161d6bdac44d71ad7d8fb71d58de8c";
     const MODEL_ID = "face-detection";
     const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
     this.setState(
-      () => {
-        return { imageURL: IMAGE_URL };
-      },
-      () => {
-        console.log("set state" + this.state.imageURL);
-      }
+      () => { return { imageURL: IMAGE_URL }},
+      () => { console.log("set state" + this.state.imageURL) }
     );
-    ///////////////////////////////////////////////////////////////////////////////////
-    // YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE TO RUN THIS EXAMPLE
-    ///////////////////////////////////////////////////////////////////////////////////
-    const raw = JSON.stringify({
+   const raw = JSON.stringify({
       user_app_id: {
         user_id: "mahi89",
         app_id: "Face_detect",
@@ -119,6 +139,20 @@ class App extends React.Component {
       .then((response) => response.json())
       .then((result) => {
         //console.log(result.outputs[ 0 ].data.regions);
+        fetch("http://localhost:3001/image", {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: this.state.user.id }),
+        })
+          .then(res => res.text())
+          .then(count => {
+            console.log(count);
+            this.setState(() => Object.assign(this.state.user,{entries:count})
+            ,()=> console.log(this.state.user.entries))
+          });
+        
         this.faceBoxes(
           this.calculateFaceLocation(result.outputs[0].data.regions)
         );
@@ -126,23 +160,24 @@ class App extends React.Component {
       .catch((error) => console.log("error", error));
   };
   render() {
-    let { onRouteChange, inputOnChange, onButtonSubmit } = this;
+    let { onRouteChange, inputOnChange, onDetectButtonSubmit, loadUsers } = this;
     console.log(" app render");
     return (
       <div>
         <ParticlesComponent />
         {this.state.route === "signin" ? (
-          <Signin onRouteChange={onRouteChange} />
+          <Signin onRouteChange={onRouteChange} loadUsers={loadUsers} />
         ) : this.state.route === "register" ? (
-          <Register onRouteChange={onRouteChange} />
+          <Register onRouteChange={onRouteChange} loadUsers={loadUsers} />
         ) : (
           <div>
             <Navigation onRouteChange={onRouteChange} />
             <Logo />
-            <Rank />
+                <Rank name={this.state.user.name}
+                      rank={this.state.user.entries } />
             <ImageLinkForm
               inputOnChange={inputOnChange}
-              onButtonSubmit={onButtonSubmit}
+              onDetectButtonSubmit={onDetectButtonSubmit}
             />
             <FaceDetection
               imageURL={this.state.imageURL}

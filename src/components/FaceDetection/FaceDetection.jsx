@@ -5,7 +5,7 @@ class FaceDetection extends Component {
     let { imageURL, boxes } = this.props;
     let faceBoxes = Object.keys(boxes);
 
-    console.log(faceBoxes);
+    //console.log(faceBoxes);
     return (
       <div className="centerFlex mt4">
         <div className="relative">
