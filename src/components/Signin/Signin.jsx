@@ -1,27 +1,30 @@
 import React, { Component } from "react";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import './signin.css'
 class Signin extends Component {
   constructor() {
     super();
     this.state = {
       emailVal: "",
       passVal: "",
-    }
+      visibility:false
+    };
   }
 
-  onEmailChange =(event)=>{
+  onEmailChange = (event) => {
     this.setState(() => {
-      return { emailVal: event.target.value }
-  })
-  }
-  onPassChange =(event)=>{
+      return { emailVal: event.target.value };
+    });
+  };
+  onPassChange = (event) => {
     this.setState(() => {
-      return { passVal: event.target.value }
-    })
-  }
+      return { passVal: event.target.value };
+    });
+  };
   onSigninSubmit = () => {
     console.log(this.state);
-    fetch('http://localhost:3001/signin', {
+    fetch("http://localhost:3001/signin", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -33,16 +36,20 @@ class Signin extends Component {
     })
       .then((response) => response.json())
       .then((result) => {
-        if (result) {
-          console.log(result.name);
-          this.props.loadUsers(result)
-          this.props.onRouteChange("home")
-        }
-        else
+        if (result.name) {
           console.log(result);
-      }
-      );
-  }
+          this.props.loadUsers(result);
+          this.props.onRouteChange("home");
+        } else console.log(result);
+      });
+  };
+  togglePassVisibility = () => {
+    let tf = this.state.visibility ? false : true;
+    this.setState(
+      () => Object.assign(this.state, { visibility: tf },
+      ()=> console.log(this.state.visibility)))
+}
+
   render() {
     console.log("render signin");
     return (
@@ -63,20 +70,23 @@ class Signin extends Component {
                 onChange={this.onEmailChange}
               />
             </div>
-            <div className="mv3">
+            <div className="mv3 visibility">
               <label className="db fw6 lh-copy f4" htmlFor="password">
                 Password
               </label>
               <input
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                type="password"
+                type={this.state.visibility? "text":"password"}
                 name="password"
                 id="password"
                 autoComplete="off"
-             
-             
                 onChange={this.onPassChange}
               />
+              <i> <FontAwesomeIcon
+                  icon={faEye}
+                  onClick={this.togglePassVisibility}
+                />
+              </i>
             </div>
             <label className="pa0 ma0 lh-copy f4 pointer">
               <input type="checkbox" /> Remember me

@@ -1,0 +1,12 @@
+i{
+    font-size: 30px;
+    color: purple;
+    position: absolute;
+    padding: 1px;
+    top:50%;
+    right: 1%;
+    cursor:pointer;
+}
+.visibility{
+    position: relative;
+}

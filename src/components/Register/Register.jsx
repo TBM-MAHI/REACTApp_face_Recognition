@@ -33,7 +33,6 @@ class Register extends Component {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: 4,
         email: this.state.emailVal,
         name:this.state.nameVal,
         password: this.state.passVal,
@@ -42,16 +41,15 @@ class Register extends Component {
       .then((response) => response.json())
       .then((result) => {
         if (result) {
-          this.props.loadUsers(result);
+          //this.props.loadUsers(result);
           console.log(result);
-          //this.props.onRouteChange("signin");
+          this.props.onRouteChange("signin");
         }
         else
           console.log("eror");
       });
   };
   render() {
-    let { onRouteChange } = this.props;
     return (
       <div>
         <div>

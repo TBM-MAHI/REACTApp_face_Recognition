@@ -10,10 +10,11 @@ class FaceDetection extends Component {
       <div className="centerFlex mt4">
         <div className="relative">
           <img src={`${imageURL}`} id={"inputImg"} alt=""/>
-          {faceBoxes.map((fb) => {
+          {faceBoxes.map((fb,index) => {
             //console.log(boxes[fb].topRow);
             return (
               <div
+                key={index}
                 className="bounding-box"
                 style={{
                   top: `${boxes[fb].topRow}px`,
@@ -21,6 +22,7 @@ class FaceDetection extends Component {
                   left: `${boxes[fb].leftCol}px`,
                   right: `${boxes[fb].rightCol}px`,
                 }}
+               
               >
             </div>
             );

@@ -1,5 +1,4 @@
 import React from "react";
-import Clarifai from "clarifai";
 import "./App.css";
 import ParticlesComponent from "./components/Particles/Particle.jsx";
 import Register from "./components/Register/Register";
@@ -19,21 +18,21 @@ class App extends React.Component {
       boxes: {},
       route: "signin",
       user: {
-        id: 2,
+        id: '',
         name: "",
         username: "",
         email: "",
         password: "",
         entries: 0,
-        joined: new Date(),
+        joined: ''
       },
     };
   }
-  componentDidMount() {
+/*   componentDidMount() {
     fetch('http://localhost:3001')
       .then(response => response.json())
       .then(result => console.log(result))
-  }
+  } */
   loadUsers = (data) => {
     this.setState(() => {
       return {
@@ -41,8 +40,7 @@ class App extends React.Component {
           id: data.id,
           name: data.name,
           email: data.email,
-          password: data.password,
-          entries: data.entries,
+          entries: Number (data.entries),
           joined: data.joined,
         },
       };
@@ -146,11 +144,12 @@ class App extends React.Component {
           },
           body: JSON.stringify({ id: this.state.user.id }),
         })
-          .then(res => res.text())
+          .then(res => res.json())
           .then(count => {
-            console.log(count);
-            this.setState(() => Object.assign(this.state.user,{entries:count})
-            ,()=> console.log(this.state.user.entries))
+            console.log(count[0]);
+            this.setState(
+              () => Object.assign(this.state.user, count[ 0 ])
+           )
           });
         
         this.faceBoxes(
@@ -159,6 +158,7 @@ class App extends React.Component {
       })
       .catch((error) => console.log("error", error));
   };
+  
   render() {
     let { onRouteChange, inputOnChange, onDetectButtonSubmit, loadUsers } = this;
     console.log(" app render");
