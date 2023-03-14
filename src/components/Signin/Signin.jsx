@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
+
 import './signin.css'
 class Signin extends Component {
   constructor() {
@@ -8,7 +9,11 @@ class Signin extends Component {
     this.state = {
       emailVal: "",
       passVal: "",
-      visibility:false
+      visibility: false,
+      err: {
+        ename: "",
+        exists: false,
+      },
     };
   }
 
@@ -40,15 +45,22 @@ class Signin extends Component {
           console.log(result);
           this.props.loadUsers(result);
           this.props.onRouteChange("home");
-        } else console.log(result);
+        }
+        let { message } = result;
+        console.log(message);
+        this.setState(() =>
+          Object.assign(this.state.err, { ename: message, exists: true })
+        );
       });
   };
   togglePassVisibility = () => {
     let tf = this.state.visibility ? false : true;
-    this.setState(
-      () => Object.assign(this.state, { visibility: tf },
-      ()=> console.log(this.state.visibility)))
-}
+    this.setState(() =>
+      Object.assign(this.state, { visibility: tf }, () =>
+        console.log(this.state.visibility)
+      )
+    );
+  };
 
   render() {
     console.log("render signin");
@@ -67,6 +79,7 @@ class Signin extends Component {
                 type="email"
                 name="email-address"
                 id="email-address"
+                autoComplete="no"
                 onChange={this.onEmailChange}
               />
             </div>
@@ -76,13 +89,15 @@ class Signin extends Component {
               </label>
               <input
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                type={this.state.visibility? "text":"password"}
+                type={this.state.visibility ? "text" : "password"}
                 name="password"
                 id="password"
-                autoComplete="off"
+                autoComplete ="no"
                 onChange={this.onPassChange}
               />
-              <i> <FontAwesomeIcon
+              <i>
+                {" "}
+                <FontAwesomeIcon
                   icon={faEye}
                   onClick={this.togglePassVisibility}
                 />
@@ -104,11 +119,16 @@ class Signin extends Component {
             No Account? Register
             <a
               href="#0"
-              className="f3 link dim black db"
+              className="f4 link dim black"
               onClick={() => this.props.onRouteChange("register")}
             >
               Here
             </a>
+          </div>
+          <div className="f3 fw7 mt3 red">
+            {this.state.err.exists
+              ? this.state.err.ename + "Try Again."
+              : ""}
           </div>
         </div>
       </div>

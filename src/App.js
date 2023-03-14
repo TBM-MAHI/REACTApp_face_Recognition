@@ -9,49 +9,54 @@ import Rank from "./components/Rank/Rank";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import FaceDetection from "./components/FaceDetection/FaceDetection.jsx";
 
+let initialState = {
+  input: "",
+  imageURL: "",
+  boxes: {},
+  route: "signin",
+  user: {
+    id: "",
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    entries: 0,
+    joined: "",
+  },
+};
+
 class App extends React.Component {
   constructor() {
     super();
-    this.state = {
-      input: "",
-      imageURL: "",
-      boxes: {},
-      route: "signin",
-      user: {
-        id: '',
-        name: "",
-        username: "",
-        email: "",
-        password: "",
-        entries: 0,
-        joined: ''
-      },
-    };
+    this.state = initialState;
   }
-/*   componentDidMount() {
+  /*   componentDidMount() {
     fetch('http://localhost:3001')
       .then(response => response.json())
       .then(result => console.log(result))
   } */
   loadUsers = (data) => {
-    this.setState(() => {
-      return {
-        user: {
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          entries: Number (data.entries),
-          joined: data.joined,
-        },
-      };
-    },()=> console.log(this.state.user))
-  }
+    this.setState(
+      () => {
+        return {
+          user: {
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            entries: Number(data.entries),
+            joined: data.joined,
+          },
+        };
+      },
+      () => console.log(this.state.user)
+    );
+  };
   calculateFaceLocation = (regions) => {
     let imgBoxes = {};
     let imgInput = document.getElementById("inputImg");
     let imgHeight = Number(imgInput.height);
     let imgWidth = Number(imgInput.width);
-   // console.log("height ", imgHeight, imgWidth);
+    console.log("height ", imgHeight,"width", imgWidth);
     regions.map((r, index) => {
       imgBoxes[`imgbox${index}`] = {
         leftCol: r.region_info.bounding_box.left_col * imgWidth,
@@ -64,10 +69,7 @@ class App extends React.Component {
     return imgBoxes;
   };
   faceBoxes = (imgBoxes) => {
-    this.setState(
-      () => {
-        return { boxes: imgBoxes };
-      },
+    this.setState(() => {return { boxes: imgBoxes } },
       () => {
         // console.log(this.state.boxes);
       }
@@ -81,62 +83,34 @@ class App extends React.Component {
   };
 
   onRouteChange = (route) => {
-    this.setState(() => {
-      return { route: route };
-    });
+    if (route === "signout") {
+      this.setState(initialState);
+    } else {
+      this.setState(() => {
+        return { route: route };
+      });
+    }
   };
+
   onDetectButtonSubmit = () => {
-    console.log("loading...");
-    // const IMAGE_URL = this.state.input;
-    const IMAGE_URL = "https://th.bing.com/th/id/OIP.vIQr_keH9CObzE7niK_lcgHaEo?pid=ImgDet&rs=1";
-    // const IMAGE_URL = "https://c.stocksy.com/a/wyk500/z9/1372242.jpg";
-    const PAT = "a8161d6bdac44d71ad7d8fb71d58de8c";
-    const MODEL_ID = "face-detection";
-    const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
-    this.setState(
-      () => { return { imageURL: IMAGE_URL }},
-      () => { console.log("set state" + this.state.imageURL) }
-    );
-   const raw = JSON.stringify({
-      user_app_id: {
-        user_id: "mahi89",
-        app_id: "Face_detect",
-      },
-      inputs: [
-        {
-          data: {
-            image: {
-              url: IMAGE_URL,
-            },
-          },
-        },
-      ],
-    });
-
-    const requestOptions = {
-      method: "POST",
+    let IMG_URL = this.state.input;
+    this.setState(Object.assign(this.state, { imageURL :this.state.input}));
+    
+    fetch("http://localhost:3001/imageAPIcall", {
+      method: "post",
       headers: {
-        Accept: "application/json",
-        Authorization: "Key " + PAT,
+        "Content-Type": "application/json",
       },
-      body: raw,
-    };
-
-    // NOTE: MODEL_VERSION_ID is optional, you can also call prediction with the MODEL_ID only
-    // https://api.clarifai.com/v2/models/{YOUR_MODEL_ID}/outputs
-    // this will default to the latest version_id
-
-    fetch(
-      "https://api.clarifai.com/v2/models/" +
-        MODEL_ID +
-        "/versions/" +
-        MODEL_VERSION_ID +
-        "/outputs",
-      requestOptions
-    )
-      .then((response) => response.json())
+      body: JSON.stringify({
+        imgURL: IMG_URL,
+      })
+    }).then(response => response.json())
       .then((result) => {
-        //console.log(result.outputs[ 0 ].data.regions);
+        console.log(result);
+        console.log(result.outputs[0].data.regions);
+        this.faceBoxes(
+          this.calculateFaceLocation(result.outputs[0].data.regions)
+        );
         fetch("http://localhost:3001/image", {
           method: "put",
           headers: {
@@ -144,24 +118,20 @@ class App extends React.Component {
           },
           body: JSON.stringify({ id: this.state.user.id }),
         })
-          .then(res => res.json())
-          .then(count => {
+          .then((res) => res.json())
+          .then((count) => {
             console.log(count[0]);
-            this.setState(
-              () => Object.assign(this.state.user, count[ 0 ])
-           )
-          });
-        
-        this.faceBoxes(
-          this.calculateFaceLocation(result.outputs[0].data.regions)
-        );
+            this.setState(() => Object.assign(this.state.user, count[0]));
+          })
+          .catch((err) => console.log(err));
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log("clarifai API Failed", error));
   };
-  
+
   render() {
-    let { onRouteChange, inputOnChange, onDetectButtonSubmit, loadUsers } = this;
-    console.log(" app render");
+    let { onRouteChange, inputOnChange, onDetectButtonSubmit, loadUsers } =
+      this;
+    console.log("app render");
     return (
       <div>
         <ParticlesComponent />
@@ -173,8 +143,7 @@ class App extends React.Component {
           <div>
             <Navigation onRouteChange={onRouteChange} />
             <Logo />
-                <Rank name={this.state.user.name}
-                      rank={this.state.user.entries } />
+            <Rank name={this.state.user.name} rank={this.state.user.entries} />
             <ImageLinkForm
               inputOnChange={inputOnChange}
               onDetectButtonSubmit={onDetectButtonSubmit}

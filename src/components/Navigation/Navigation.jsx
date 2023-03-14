@@ -7,7 +7,7 @@ class Navigation extends Component {
       <nav>
         <p
           className="tr f2 dark-blue link dim pointer pa3 ma0"
-          onClick={() => onRouteChange("signin")}
+          onClick={() => onRouteChange("signout")}
         >
           Sign out
         </p>

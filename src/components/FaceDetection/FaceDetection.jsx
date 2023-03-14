@@ -22,7 +22,6 @@ class FaceDetection extends Component {
                   left: `${boxes[fb].leftCol}px`,
                   right: `${boxes[fb].rightCol}px`,
                 }}
-               
               >
             </div>
             );
