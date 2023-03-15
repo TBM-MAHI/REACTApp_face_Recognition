@@ -52,12 +52,13 @@ class App extends React.Component {
     );
   };
   calculateFaceLocation = (regions) => {
+    console.log(regions);
     let imgBoxes = {};
     let imgInput = document.getElementById("inputImg");
     let imgHeight = Number(imgInput.height);
     let imgWidth = Number(imgInput.width);
     console.log("height ", imgHeight,"width", imgWidth);
-    regions.map((r, index) => {
+    regions.forEach((r, index) => {
       imgBoxes[`imgbox${index}`] = {
         leftCol: r.region_info.bounding_box.left_col * imgWidth,
         rightCol: imgWidth - r.region_info.bounding_box.right_col * imgWidth,
@@ -106,8 +107,8 @@ class App extends React.Component {
       })
     }).then(response => response.json())
       .then((result) => {
-        console.log(result);
-        console.log(result.outputs[0].data.regions);
+        /* console.log(result);
+        console.log(result.outputs[0].data.regions); */
         this.faceBoxes(
           this.calculateFaceLocation(result.outputs[0].data.regions)
         );
