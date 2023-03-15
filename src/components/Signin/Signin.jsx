@@ -52,7 +52,7 @@ class Signin extends Component {
           Object.assign(this.state.err, { ename: message, exists: true })
         );
       });
-  };
+  }
   togglePassVisibility = () => {
     let tf = this.state.visibility ? false : true;
     this.setState(() =>
@@ -92,7 +92,7 @@ class Signin extends Component {
                 type={this.state.visibility ? "text" : "password"}
                 name="password"
                 id="password"
-                autoComplete ="no"
+                autoComplete="no"
                 onChange={this.onPassChange}
               />
               <i>
@@ -126,9 +126,7 @@ class Signin extends Component {
             </a>
           </div>
           <div className="f3 fw7 mt3 red">
-            {this.state.err.exists
-              ? this.state.err.ename + "Try Again."
-              : ""}
+            {this.state.err.exists ? this.state.err.ename + "Try Again." : ""}
           </div>
         </div>
       </div>
