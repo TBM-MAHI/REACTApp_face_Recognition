@@ -41,7 +41,7 @@ Face Detection App
 git clone https://github.com/TBM-MAHI/REACTApp_face_Recognition.git
 ```
 ```sh
-cd REACTApp_monster_rolodex
+cd REACTApp_face_Recognition
 ```
 ```sh
 npm install
