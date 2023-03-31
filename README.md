@@ -6,7 +6,7 @@ Face Detection App
 ##### Live demo only of the Sign In page [here].
 ## Features
 - ##### A Login and resgistration Page.
-- ##### Backgrpound Animationin all Pages.
+- ##### Particles Background Animationin in all Pages.
 - ##### A Form page with an input field that takes a image URL an input.
 - ##### Implements face-detection API from [Clarifai].
 - ##### Draws boxes around detected faces. 
@@ -29,7 +29,12 @@ Face Detection App
 <a href="https://www.postgresql.org/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/postgresql-colored.svg" width="36" height="36" alt="PostgreSQL" /></a> 
 </p>
 
+### Packages 
+<a href="https://www.npmjs.com/" target="_blank" rel="noreferrer"><img src="https://img.icons8.com/color/48/null/npm.png" width="36" height="36" alt="NPM"/></a>
+
 ## Installation
+
+
 ##### Run the following commands to run this project on localhost
 
 
