@@ -37,7 +37,18 @@ Face Detection App
 
 ##### Run the following commands to run this project on localhost
 
-
+```sh
+git clone https://github.com/TBM-MAHI/REACTApp_face_Recognition.git
+```
+```sh
+cd REACTApp_monster_rolodex
+```
+```sh
+npm install
+```
+```sh
+npm run start
+```
 
 
 
