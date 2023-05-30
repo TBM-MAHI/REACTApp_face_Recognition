@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import ParticlesComponent from "./components/Particles/Particle.jsx";
+
 import Register from "./components/Register/Register";
 import Signin from "./components/Signin/Signin";
 import Navigation from "./components/Navigation/Navigation.jsx";
@@ -97,22 +98,23 @@ class App extends React.Component {
     let IMG_URL = this.state.input;
     this.setState(Object.assign(this.state, { imageURL :this.state.input}));
     
-    fetch("http://localhost:3001/imageAPIcall", {
+    fetch("https://facerecognition-api-backend.onrender.com/imageAPIcall", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         imgURL: IMG_URL,
-      })
-    }).then(response => response.json())
+      }),
+    })
+      .then((response) => response.json())
       .then((result) => {
         /* console.log(result);
         console.log(result.outputs[0].data.regions); */
         this.faceBoxes(
           this.calculateFaceLocation(result.outputs[0].data.regions)
         );
-        fetch("http://localhost:3001/image", {
+        fetch("https://facerecognition-api-backend.onrender.com/image", {
           method: "put",
           headers: {
             "Content-Type": "application/json",
@@ -121,7 +123,7 @@ class App extends React.Component {
         })
           .then((res) => res.json())
           .then((count) => {
-            console.log(count[0]);
+           // console.log(count[0]);
             this.setState(() => Object.assign(this.state.user, count[0]));
           })
           .catch((err) => console.log(err));

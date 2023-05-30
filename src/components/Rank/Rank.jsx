@@ -8,7 +8,7 @@ class Rank extends Component {
           <div className="centerFlex">
             <div className="white f3 mt5">{`${name} Your rank is now`}</div>
             <div className="white f1">{`${rank}`}</div>
-          </div>
+          </div>  
         );
     }
 }
