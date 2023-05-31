@@ -27,32 +27,42 @@ class Signin extends Component {
       return { passVal: event.target.value };
     });
   };
-  onSigninSubmit = () => {
-    console.log(this.state);
-    fetch("https://facerecognition-api-backend.onrender.com/signin", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: this.state.emailVal,
-        password: this.state.passVal,
-      }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.name) {
-          console.log(result);
-          this.props.loadUsers(result);
-          this.props.onRouteChange("home");
+  onSigninSubmit = async () => {
+    console.log("submitted value ", this.state);
+    try {
+      let response = await fetch(
+        "https://facerecognition-api-backend.onrender.com/signin",
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: this.state.emailVal,
+            password: this.state.passVal,
+          }),
         }
-        let { message } = result;
+      );
+
+      let result = await response.json();
+      let { message,data } = result;
+      if (response.status === 200) {
+        console.log(message)
+        console.log(data)
+        this.props.loadUsers(data);
+        this.props.onRouteChange("home");
+      } else if (response.status === 400) {
         console.log(message);
         this.setState(() =>
           Object.assign(this.state.err, { ename: message, exists: true })
         );
-      });
-  }
+      }
+    } catch (error) {
+      this.setState(() =>
+        Object.assign(this.state.err, { ename: `Internal Server Err!`, exists: true })
+      );
+    }
+  };
   togglePassVisibility = () => {
     let tf = this.state.visibility ? false : true;
     this.setState(() =>

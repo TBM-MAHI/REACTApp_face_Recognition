@@ -12,7 +12,7 @@ class Register extends Component {
       nameVal: "",
       visibility: false,
       err: {
-        errmessage: "",
+        errormessage: "",
         exists: false,
       },
     };
@@ -42,37 +42,35 @@ class Register extends Component {
       )
     );
   };
-  onRegisterSubmit = () => {
+  onRegisterSubmit = async () => {
     console.log(this.state);
-    fetch("https://facerecognition-api-backend.onrender.com/register", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: this.state.emailVal,
-        name: this.state.nameVal,
-        password: this.state.passVal,
-      }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.name) {
-          //this.props.loadUsers(result);
-          console.log(result);
-          this.props.onRouteChange("signin");
-        }
-
-        console.log(result.message);
-        this.setState(() => {
-          return {
-            err: {
-              errmessage: result.message,
-              exists: true,
-            },
-          };
-        });
-      });
+    let response = await fetch(
+      "https://facerecognition-api-backend.onrender.com/register",
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: this.state.emailVal,
+          name: this.state.nameVal,
+          password: this.state.passVal,
+        }),
+      }
+    );
+    let result = await response.json();
+    let { message, data } = result;
+    
+    if (response.status === 201) {
+      console.log(message); 
+      alert("registration success!. Click OK to continue");
+      this.props.onRouteChange("signin");
+    } else if (response.status === 400) {
+      console.log(message);
+      this.setState(() =>
+        Object.assign(this.state.err, { errormessage: message, exists: true })
+      );
+    }
   };
   render() {
     console.log("render register");
@@ -134,9 +132,7 @@ class Register extends Component {
             />
           </div>
           <div className="f3 fw7 mt3 red">
-            {this.state.err.exists
-              ? this.state.err.errmessage + "Try Again."
-              : ""}
+            {this.state.err.exists ? this.state.err.errormessage : ""}
           </div>
         </div>
       </div>
