@@ -46,7 +46,13 @@ class Register extends Component {
   onRegisterSubmit = async () => {
     console.log(this.state);
     this.setState(() => {
-      return { loading: "loading...please wait" };
+      return {
+        loading: "loading...please wait",
+        err: {
+          errormessage: null,
+          exists: false,
+        },
+      };
     })
     let response = await fetch(
       "https://facerecognition-api-backend.onrender.com/register",

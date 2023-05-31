@@ -5,7 +5,7 @@ img{
 }
 .bounding-box{
     position: absolute;
-    box-shadow: 0 0 0 3px blue inset;
+    box-shadow: 0 0 0 3px limegreen inset;
     display: flex;
     justify-content: center;
     cursor: pointer;
