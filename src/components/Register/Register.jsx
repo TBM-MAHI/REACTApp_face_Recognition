@@ -7,6 +7,7 @@ class Register extends Component {
   constructor() {
     super();
     this.state = {
+      loading:null,
       emailVal: "",
       passVal: "",
       nameVal: "",
@@ -44,6 +45,9 @@ class Register extends Component {
   };
   onRegisterSubmit = async () => {
     console.log(this.state);
+    this.setState(() => {
+      return { loading: "loading...please wait" };
+    })
     let response = await fetch(
       "https://facerecognition-api-backend.onrender.com/register",
       {
@@ -62,11 +66,16 @@ class Register extends Component {
     let { message, data } = result;
     
     if (response.status === 201) {
+      this.setState(() => {
+        return { loading: null };
+      });
       console.log(message); 
       alert("registration success!. Click OK to continue");
       this.props.onRouteChange("signin");
     } else if (response.status === 400) {
-      console.log(message);
+      this.setState(() => {
+        return { loading: null };
+      });
       this.setState(() =>
         Object.assign(this.state.err, { errormessage: message, exists: true })
       );
@@ -80,14 +89,14 @@ class Register extends Component {
           <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
             <legend className="f1 fw6 ph0 mh0">Register</legend>
             <div className="mt3">
-              <label className="db fw6 lh-copy f3" htmlFor="email-address">
+              <label className="db fw6 lh-copy f3" htmlFor="email">
                 Email
               </label>
               <input
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100 outline-0"
                 type="email"
-                name="email-address"
-                id="email-address"
+                name="email"
+                id="email"
                 onChange={this.onEmailChange}
               />
             </div>
@@ -100,6 +109,7 @@ class Register extends Component {
                 type="text"
                 name="user-name"
                 onChange={this.onNameChange}
+                autoComplete='none'
               />
             </div>
             <div className="mv3 visibility">
@@ -133,6 +143,7 @@ class Register extends Component {
           </div>
           <div className="f3 fw7 mt3 red">
             {this.state.err.exists ? this.state.err.errormessage : ""}
+            {this.state.loading ? this.state.loading : ""}
           </div>
         </div>
       </div>

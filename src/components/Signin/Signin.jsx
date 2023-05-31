@@ -10,6 +10,7 @@ class Signin extends Component {
       emailVal: "",
       passVal: "",
       visibility: false,
+      loading: null,
       err: {
         ename: "",
         exists: false,
@@ -28,7 +29,10 @@ class Signin extends Component {
     });
   };
   onSigninSubmit = async () => {
-    console.log("submitted value ", this.state);
+   // console.log("submitted value ", this.state);
+     this.setState(() => {
+       return { loading: "loading...please wait" };
+     });
     try {
       let response = await fetch(
         "https://facerecognition-api-backend.onrender.com/signin",
@@ -47,11 +51,17 @@ class Signin extends Component {
       let result = await response.json();
       let { message,data } = result;
       if (response.status === 200) {
+         this.setState(() => {
+           return { loading: null };
+         });
         console.log(message)
         console.log(data)
         this.props.loadUsers(data);
         this.props.onRouteChange("home");
       } else if (response.status === 400) {
+         this.setState(() => {
+           return { loading: null };
+         });
         console.log(message);
         this.setState(() =>
           Object.assign(this.state.err, { ename: message, exists: true })
@@ -137,6 +147,7 @@ class Signin extends Component {
           </div>
           <div className="f3 fw7 mt3 red">
             {this.state.err.exists ? this.state.err.ename + "Try Again." : ""}
+            {this.state.loading ? this.state.loading : ""}
           </div>
         </div>
       </div>

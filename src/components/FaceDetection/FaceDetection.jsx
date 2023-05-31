@@ -7,7 +7,7 @@ class FaceDetection extends Component {
 
     //console.log(faceBoxes);
     return (
-      <div className="centerFlex mt4">
+      <div className="centerFlex mt4 mb4">
         <div className="relative">
           <img src={`${imageURL}`} id={"inputImg"} alt=""/>
           {faceBoxes.map((fb,index) => {
