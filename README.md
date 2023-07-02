@@ -3,7 +3,7 @@ Face Detection App
 
 
 ## A React app that Detects human face.
-##### Live demo only of the Sign In page [here].
+##### Live demo of the Application [here].
 ## Features
 - ##### A Login and resgistration Page.
 - ##### Particles Background Animationin in all Pages.
